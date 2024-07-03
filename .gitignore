@@ -1,0 +1,65 @@
+# Idea
+.idea/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Django stuff:
+*.log
+*.pot
+*.pyc
+*.pyo
+*.db
+*.sqlite3
+media
+
+# If your build process includes running collectstatic, then you probably don't need or want to include staticfiles.
+# If however you do want to include staticfiles you should probably also include `!staticfiles/.gitkeep`
+staticfiles
+
+# Ignore env
+.env
+
+# Ignore VS Code settings
+.vscode
+
+# Ignore docker-compose overrides file
+docker-compose.override.yml
+
+# Ignore macOS system files
+.DS_Store
+
+# Ignore node_modules
+node_modules/
+
+# Ignore coverage
+coverage/
+
+# Ignore migrations
+*/migrations/*
+
+# Ignore virtual environments
+venv/
+env/
