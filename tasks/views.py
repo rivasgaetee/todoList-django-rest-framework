@@ -1,8 +1,12 @@
 from rest_framework import viewsets
 from .models import Task
-from .serializers import TaskSerializer
+from .serializers import TaskReadSerializer, TaskWriteSerializer
 
 
 class TaskViewSet(viewsets.ModelViewSet):
     queryset = Task.objects.all()
-    serializer_class = TaskSerializer
+
+    def get_serializer_class(self):
+        if self.action in ['create', 'update']:
+            return TaskWriteSerializer
+        return TaskReadSerializer

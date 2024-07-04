@@ -8,7 +8,15 @@ class TaskStatusSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class TaskSerializer(serializers.ModelSerializer):
+class TaskReadSerializer(serializers.ModelSerializer):
+    status = TaskStatusSerializer()
+
+    class Meta:
+        model = Task
+        fields = '__all__'
+
+
+class TaskWriteSerializer(serializers.ModelSerializer):
     status = serializers.PrimaryKeyRelatedField(queryset=TaskStatus.objects.all())
 
     class Meta:
