@@ -24,5 +24,13 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/
 
+  pytest:
+    build: .
+    command: pytest
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+
 volumes:
   postgres_data:
