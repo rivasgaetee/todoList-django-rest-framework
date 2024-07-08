@@ -12,7 +12,7 @@ def task_status(db):
 def task(db, task_status):
     return Task.objects.create(
         title="Test Task",
-        description="This is a test task",
+        description="Esto es una tarea de pruebas",
         status=task_status,
         completed=False
     )
@@ -20,7 +20,7 @@ def task(db, task_status):
 
 def test_task_creation(task):
     assert task.title == "Test Task"
-    assert task.description == "This is a test task"
+    assert task.description == "Esto es una tarea de pruebas 2"
     assert task.status.name == "not_started"
     assert not task.completed
     assert task.created_at is not None
