@@ -18,3 +18,12 @@ class Task(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class CustomUser(models.Model):
+    user_id = models.CharField(max_length=255, unique=True)
+    email = models.EmailField()
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.email
