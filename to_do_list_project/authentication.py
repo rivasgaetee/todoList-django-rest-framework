@@ -1,19 +1,9 @@
-from rest_framework import authentication, exceptions
-from jose import jwt
 import json
+from jose import jwt
 from urllib.request import urlopen
 from django.conf import settings
-
-
-class FakeUser:
-    def __init__(self, payload):
-        self.username = payload.get('sub')
-        self.email = payload.get('email')
-        self.is_active = True
-        self.is_authenticated = True
-
-    def __str__(self):
-        return self.email or self.username
+from rest_framework import authentication, exceptions
+from django.contrib.auth.models import User
 
 
 def get_token_auth_header(request):
@@ -42,7 +32,6 @@ def jwt_decode_token(token):
         raise exceptions.AuthenticationFailed(f'Unable to fetch JWKS: {str(e)}')
 
     unverified_header = jwt.get_unverified_header(token)
-    print(f"Unverified Header: {unverified_header}")
     rsa_key = {}
     for key in jwks["keys"]:
         if key["kid"] == unverified_header["kid"]:
@@ -57,7 +46,6 @@ def jwt_decode_token(token):
 
     if rsa_key:
         try:
-            print(f"Key: {rsa_key}")
             payload = jwt.decode(
                 token,
                 rsa_key,
@@ -65,16 +53,13 @@ def jwt_decode_token(token):
                 audience=settings.AUTH0_AUDIENCE,
                 issuer=f"https://{settings.AUTH0_DOMAIN}/"
             )
-            print(f"Payload: {payload}")
             return payload
         except jwt.ExpiredSignatureError:
             raise exceptions.AuthenticationFailed('Token is expired')
-        except jwt.JWTClaimsError as e:
-            print(f"JWT Claims Error: {str(e)}")
+        except jwt.JWTClaimsError:
             raise exceptions.AuthenticationFailed('Incorrect claims, please check the audience and issuer')
-        except Exception as e:
-            print(f"Exception: {str(e)}")
-            raise exceptions.AuthenticationFailed(f'Unable to parse authentication token: {str(e)}')
+        except Exception:
+            raise exceptions.AuthenticationFailed('Unable to parse authentication token')
 
     raise exceptions.AuthenticationFailed('Unable to find appropriate key')
 
@@ -84,10 +69,13 @@ class Auth0JSONWebTokenAuthentication(authentication.BaseAuthentication):
         token = get_token_auth_header(request)
         try:
             payload = jwt_decode_token(token)
-            user = FakeUser(payload)
-            return (user, token)
+            print(payload)
+            user, created = User.objects.get_or_create(username=payload['sub'], defaults={
+                'email': payload.get('email', ''),
+                'first_name': payload.get('name', '')
+            })
+            return user, token
         except exceptions.AuthenticationFailed as e:
             raise e
-        except Exception as e:
-            print(f"Exception: {e}")
+        except Exception:
             raise exceptions.AuthenticationFailed('Unable to parse authentication token')
